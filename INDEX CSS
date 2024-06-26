@@ -1,0 +1,67 @@
+/* styles.css */
+
+/* Estilos para el título h1 */
+h1 {
+  font-size: 50px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-image: linear-gradient(to right, #007bff, #f01be2); /* Degradado azul a morado */
+  -webkit-background-clip: text; /* Aplicar degradado al texto para WebKit */
+  color: transparent; /* Ocultar el color del texto */
+}
+
+/* Estilos para el cuerpo del documento */
+body {
+  background-color: #1f1f1f; /* Fondo oscuro */
+  color: #ffffff; /* Texto blanco */
+  font-family: Arial, sans-serif;
+}
+
+/* Estilos para el contenedor principal .App */
+.App {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #292929; /* Fondo gris oscuro */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra sutíl */
+}
+
+
+/* Estilos para las etiquetas <label> */
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Estilos para los selectores y botón */
+select,
+button {
+  font-size: 16px;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  background-color: #444444; /* Fondo gris oscuro */
+  color: #ffffff; /* Texto blanco */
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Estilos específicos para el botón */
+button {
+  background-color: #5a2be6; /* Color púrpura */
+  color: #ffffff; /* Texto blanco */
+  transition: background-color 0.3s; /* Transición suave para el color de fondo */
+}
+
+/* Estilos al pasar el mouse sobre el botón */
+button:hover {
+  background-color: #4a1ac5; /* Cambio de color al pasar el mouse */
+}
+
+/* Estilos para el elemento <audio> */
+audio {
+  width: 100%;
+  margin-top: 10px;
+}
