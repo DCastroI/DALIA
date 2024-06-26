@@ -1,0 +1,117 @@
+package dalia;
+
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class ManejadorCrearClip implements HttpHandler {
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        // Configuración de CORS
+        configureCORS(exchange);
+        
+        // Manejar solicitudes OPTIONS
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+            handleOptionsRequest(exchange);
+            return;
+        }
+
+        // Manejar solicitudes POST
+        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            handlePostRequest(exchange);
+        } else {
+            // Si la solicitud no es OPTIONS ni POST, responder con error
+            sendErrorResponse(exchange, 400, "Error: Esta ruta solo acepta solicitudes POST.");
+        }
+    }
+
+    // Método para manejar solicitudes OPTIONS
+    private void handleOptionsRequest(HttpExchange exchange) throws IOException {
+        exchange.sendResponseHeaders(204, -1); // No content
+    }
+
+    // Método para manejar solicitudes POST
+    private void handlePostRequest(HttpExchange exchange) throws IOException {
+        // Leer el cuerpo de la solicitud como JSON
+        JSONObject jsonInput = parseJSON(exchange.getRequestBody());
+        if (jsonInput == null) {
+            sendErrorResponse(exchange, 400, "Error: No se pudo procesar el cuerpo de la solicitud JSON.");
+            return;
+        }
+
+        try {
+            String genero = jsonInput.getString("genero");
+            String instrumento = jsonInput.getString("instrumento");
+
+            // Llamar a la API para generar clip
+            MuseNetApi musenet = new MuseNetApi();
+            String clipUrl = musenet.generarClip(genero, instrumento);
+
+            // Guardar el clip en clip.mp3 (solo si es necesario, depende de tu lógica)
+            // Nota: Esto guarda el archivo en el servidor, asegúrate de que sea necesario y seguro
+            byte[] clipData = new byte[0];
+            try (InputStream in = new URL(clipUrl).openStream()) {
+                clipData = in.readAllBytes();
+            }
+            Files.write(Paths.get("clip.mp3"), clipData);
+
+            // Configurar la respuesta con la URL del clip en formato JSON
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("clip_url", clipUrl);
+
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, jsonResponse.toString().getBytes().length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(jsonResponse.toString().getBytes());
+            }
+        } catch (Exception e) {
+            sendErrorResponse(exchange, 500, "Error interno del servidor: " + e.getMessage());
+        }
+    }
+
+    // Método para parsear el cuerpo de la solicitud como JSON
+    private JSONObject parseJSON(InputStream inputStream) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            return new JSONObject(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Método para enviar una respuesta de error
+    private void sendErrorResponse(HttpExchange exchange, int statusCode, String message) throws IOException {
+        exchange.sendResponseHeaders(statusCode, message.getBytes().length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(message.getBytes());
+        }
+    }
+
+    // Método para configurar CORS
+    private void configureCORS(HttpExchange exchange) {
+        // Permitir el origen (http://localhost:3000)
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "http://localhost:3000");
+        
+        // Permitir los métodos GET, POST y OPTIONS
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        
+        // Permitir los encabezados Content-Type y Authorization
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    }
+}
+
