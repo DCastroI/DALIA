@@ -8,6 +8,7 @@ h1 {
   background-image: linear-gradient(to right, #007bff, #f01be2); /* Degradado azul a morado */
   -webkit-background-clip: text; /* Aplicar degradado al texto para WebKit */
   color: transparent; /* Ocultar el color del texto */
+  text-align: center;
 }
 
 /* Estilos para el cuerpo del documento */
@@ -15,6 +16,7 @@ body {
   background-color: #1f1f1f; /* Fondo oscuro */
   color: #ffffff; /* Texto blanco */
   font-family: Arial, sans-serif;
+  text-align: center;
 }
 
 /* Estilos para el contenedor principal .App */
@@ -45,6 +47,7 @@ button {
   background-color: #444444; /* Fondo gris oscuro */
   color: #ffffff; /* Texto blanco */
   cursor: pointer;
+  margin-top: 30px;
   margin-bottom: 10px;
 }
 
@@ -65,3 +68,5 @@ audio {
   width: 100%;
   margin-top: 10px;
 }
+
+
